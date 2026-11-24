@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('edit_post') }} — NOCTURNE{% endblock %}
+
+{% block content %}
+
+<section class="editor-page">
+
+    <div class="editor-heading">
+
+        <a href="{{ url_for('main.post_detail', post_id=post.id) }}" class="back-link">
+            ← {{ t('back') }}
+        </a>
+
+        <p class="eyebrow">
+            THE MIDNIGHT ARCHIVE / EDIT ENTRY {{ "%03d"|format(post.id) }}
+        </p>
+
+        <h1>{{ t('edit_heading') }}</h1>
+
+        <p>{{ t('form_hint') }}</p>
+
+    </div>
+
+    <form method="POST" class="archive-form editor-form">
+
+        {{ form.hidden_tag() }}
+
+        <div class="form-field">
+
+            <label class="form-label" for="{{ form.title.id }}">
+                {{ t('title') }}
+            </label>
+
+            {{ form.title(class="form-input title-input", maxlength="200") }}
+
+            {% for error in form.title.errors %}
+                <span class="field-error">{{ error }}</span>
+            {% endfor %}
+
+        </div>
+
+        <div class="form-field">
+
+            <label class="form-label" for="{{ form.content.id }}">
+                {{ t('content') }}
+            </label>
+
+            {{ form.content(class="form-input content-input", rows="14", maxlength="20000") }}
+
+            {% for error in form.content.errors %}
+                <span class="field-error">{{ error }}</span>
+            {% endfor %}
+
+            <span class="field-note">10–20,000 characters</span>
+
+        </div>
+
+        <div class="editor-actions">
+
+            <a href="{{ url_for('main.post_detail', post_id=post.id) }}" class="text-link">
+                {{ t('cancel') }}
+            </a>
+
+            <button type="submit" class="button button-light">
+                {{ t('save') }} ↗
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

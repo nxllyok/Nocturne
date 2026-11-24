@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ code }} — NOCTURNE{% endblock %}
+
+{% block content %}
+
+<section class="empty-state error-page">
+
+    <span class="empty-symbol">✳</span>
+
+    <p class="eyebrow">THE ARCHIVE / {{ code }}</p>
+
+    <h1>{{ code }}</h1>
+
+    <h3>{{ message }}</h3>
+
+    <a href="{{ url_for('main.index') }}" class="button button-light">
+        {{ t('home') }} ↗
+    </a>
+
+</section>
+
+{% endblock %}

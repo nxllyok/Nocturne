@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} — NOCTURNE{% endblock %}
+
+{% block content %}
+
+<article class="article-page">
+
+    <a href="{{ url_for('main.index') }}" class="back-link">
+        ← {{ t('back') }}
+    </a>
+
+    <header class="article-header">
+
+        <p class="eyebrow">
+            {{ t('entry') }} {{ "%03d"|format(post.id) }}
+            / {{ t('published') }} {{ post.created_at.strftime('%d.%m.%Y') }}
+        </p>
+
+        <h1>{{ post.title }}</h1>
+
+        <div class="article-byline">
+
+            <span>
+                {{ t('author') }}
+                <strong>{{ post.author.username }}</strong>
+            </span>
+
+            <span>✳ {{ t('reading_time') }}:
+                {{ [1, ((post.content.split()|length / 200)|round(0, 'ceil')|int)]|max }} min
+            </span>
+
+        </div>
+
+    </header>
+
+    <div class="article-art">
+        <span>NOCTURNE</span>
+        <span class="article-art-symbol">✳</span>
+        <span>ARCHIVE / {{ "%03d"|format(post.id) }}</span>
+    </div>
+
+    <div class="article-content">{{ post.content }}</div>
+
+    <div class="article-end">
+        <span>✳</span>
+        <p>END OF ENTRY</p>
+        <span>✳</span>
+    </div>
+
+    {% if current_user.is_authenticated and current_user.id == post.user_id %}
+
+        <div class="article-controls">
+
+            <a href="{{ url_for('main.edit_post', post_id=post.id) }}" class="button button-outline">
+                {{ t('edit_post') }}
+            </a>
+
+            <form
+                action="{{ url_for('main.delete_post', post_id=post.id) }}"
+                method="POST"
+                data-confirm="{{ t('delete_confirm')|e }}"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <button type="submit" class="button button-danger">
+                    {{ t('delete_post') }}
+                </button>
+
+            </form>
+
+        </div>
+
+    {% endif %}
+
+</article>
+
+<script>
+document.addEventListener("submit", function (event) {
+    const form = event.target;
+
+    if (!(form instanceof HTMLFormElement)) {
+        return;
+    }
+
+    const message = form.dataset.confirm;
+
+    if (message && !window.confirm(message)) {
+        event.preventDefault();
+    }
+});
+</script>
+
+{% endblock %}

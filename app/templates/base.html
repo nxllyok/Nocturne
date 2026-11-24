@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="{{ current_language }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#171916">
+    <meta name="description" content="NOCTURNE — The Midnight Archive. An independent digital journal.">
+
+    <title>{% block title %}NOCTURNE — The Midnight Archive{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<div class="site-shell">
+
+    <div class="topline">
+        <span>{{ t('issue') }}</span>
+        <span class="topline-center">VOL. 001 / EST. AFTER DARK</span>
+        <span class="topline-right">✳ DIGITAL ARCHIVE</span>
+    </div>
+
+    <header class="site-header">
+
+        <a href="{{ url_for('main.index') }}" class="brand">
+            <span class="brand-symbol">✳</span>
+            <span class="brand-name">NOCTURNE</span>
+            <span class="brand-caption">{{ t('tagline') }}</span>
+        </a>
+
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="main-nav" aria-label="Main navigation">
+
+            <a href="{{ url_for('main.index') }}">{{ t('home') }}</a>
+
+            <a href="{{ url_for('main.index') }}#archive">{{ t('archive') }}</a>
+
+            {% if current_user.is_authenticated %}
+
+                <a href="{{ url_for('main.create_post') }}" class="nav-write">
+                    {{ t('write') }} <span>↗</span>
+                </a>
+
+                <form action="{{ url_for('main.logout') }}" method="POST" class="logout-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="nav-logout">{{ t('logout') }}</button>
+                </form>
+
+            {% else %}
+
+                <a href="{{ url_for('main.login') }}">{{ t('login') }}</a>
+
+                <a href="{{ url_for('main.register') }}" class="nav-write">
+                    {{ t('register') }} <span>↗</span>
+                </a>
+
+            {% endif %}
+
+            <div class="language-switch" aria-label="{{ t('language') }}">
+                <a class="{{ 'active' if current_language == 'en' else '' }}" href="{{ url_for('main.change_language', language='en') }}">EN</a>
+                <a class="{{ 'active' if current_language == 'de' else '' }}" href="{{ url_for('main.change_language', language='de') }}">DE</a>
+                <a class="{{ 'active' if current_language == 'ru' else '' }}" href="{{ url_for('main.change_language', language='ru') }}">RU</a>
+            </div>
+
+        </nav>
+
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-area" aria-live="polite">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        <span class="flash-symbol">✳</span>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+
+        <div class="footer-top">
+
+            <div>
+                <div class="footer-logo">NOCTURNE<span>✳</span></div>
+                <p>{{ t('footer') }}</p>
+            </div>
+
+            <div class="footer-side">
+                <span>VOL. 001</span>
+                <span>MADE FOR THE AFTER HOURS</span>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <span>© {{ now_year }} NOCTURNE</span>
+            <span>{{ t('tagline') }}</span>
+            <a href="#main-content">BACK TO TOP ↑</a>
+        </div>
+
+    </footer>
+
+</div>
+
+<script>
+const menuButton = document.querySelector(".menu-toggle");
+const navigation = document.querySelector(".main-nav");
+
+if (menuButton && navigation) {
+    menuButton.addEventListener("click", () => {
+        const isOpen = navigation.classList.toggle("is-open");
+        menuButton.setAttribute("aria-expanded", String(isOpen));
+    });
+}
+</script>
+
+</body>
+</html>

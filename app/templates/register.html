@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('register') }} — NOCTURNE{% endblock %}
+
+{% block content %}
+
+<section class="form-page">
+
+    <div class="form-aside">
+        <span class="eyebrow">THE MIDNIGHT ARCHIVE / 02</span>
+        <div class="form-aside-symbol">✦</div>
+        <p>MAKE ROOM<br>FOR YOUR WORDS.</p>
+        <span class="form-aside-bottom">NOCTURNE — VOL. 001</span>
+    </div>
+
+    <div class="form-panel">
+
+        <a href="{{ url_for('main.index') }}" class="back-link">
+            ← {{ t('back') }}
+        </a>
+
+        <p class="eyebrow">NEW MEMBERSHIP</p>
+
+        <h1>{{ t('register_heading') }}</h1>
+
+        <p class="form-intro">{{ t('register_intro') }}</p>
+
+        <form method="POST" class="archive-form">
+
+            {{ form.hidden_tag() }}
+
+            <div class="form-field">
+
+                <label class="form-label" for="{{ form.username.id }}">
+                    {{ t('username') }}
+                </label>
+
+                {{ form.username(class="form-input", placeholder="your_name", autocomplete="username") }}
+
+                {% for error in form.username.errors %}
+                    <span class="field-error">{{ error }}</span>
+                {% endfor %}
+
+            </div>
+
+            <div class="form-field">
+
+                <label class="form-label" for="{{ form.email.id }}">
+                    {{ t('email') }}
+                </label>
+
+                {{ form.email(class="form-input", placeholder="you@example.com", autocomplete="email") }}
+
+                {% for error in form.email.errors %}
+                    <span class="field-error">{{ error }}</span>
+                {% endfor %}
+
+            </div>
+
+            <div class="form-field">
+
+                <label class="form-label" for="{{ form.password.id }}">
+                    {{ t('password') }}
+                </label>
+
+                {{ form.password(class="form-input", placeholder="At least 8 characters", autocomplete="new-password") }}
+
+                {% for error in form.password.errors %}
+                    <span class="field-error">{{ error }}</span>
+                {% endfor %}
+
+            </div>
+
+            <div class="form-field">
+
+                <label class="form-label" for="{{ form.confirm_password.id }}">
+                    {{ t('confirm_password') }}
+                </label>
+
+                {{ form.confirm_password(class="form-input", placeholder="Repeat your password", autocomplete="new-password") }}
+
+                {% for error in form.confirm_password.errors %}
+                    <span class="field-error">{{ error }}</span>
+                {% endfor %}
+
+            </div>
+
+            <button type="submit" class="button button-light form-submit">
+                {{ t('create_account') }} <span>↗</span>
+            </button>
+
+        </form>
+
+        <p class="form-switch">
+            {{ t('have_account') }}
+            <a href="{{ url_for('main.login') }}">
+                {{ t('sign_in') }} ↗
+            </a>
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

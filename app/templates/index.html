@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}NOCTURNE — The Midnight Archive{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+
+    <div class="hero-meta">
+        <span>✳ {{ t('tagline') }}</span>
+        <span>NO. 001 — AN OPEN JOURNAL</span>
+    </div>
+
+    <div class="hero-grid">
+
+        <div class="hero-copy">
+
+            <p class="eyebrow">A JOURNAL FOR THE IN-BETWEEN</p>
+
+            <h1>{{ t('welcome') }}</h1>
+
+            <p class="hero-description">{{ t('intro') }}</p>
+
+            <div class="hero-actions">
+
+                <a href="#archive" class="button button-light">
+                    {{ t('archive') }} <span>↘</span>
+                </a>
+
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('main.create_post') }}" class="text-link">
+                        {{ t('write') }} ↗
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('main.register') }}" class="text-link">
+                        {{ t('register') }} ↗
+                    </a>
+                {% endif %}
+
+            </div>
+
+            <div class="hero-footnote">
+                <span>01 / 03</span>
+                <span>THOUGHTS · MEMORIES · FRAGMENTS</span>
+            </div>
+
+        </div>
+
+        <div class="hero-art">
+
+            <div class="hero-image">
+                <div class="image-grain"></div>
+
+                <div class="image-caption">
+                    <span>FIG. 001</span>
+                    <span>THE QUIET HOURS</span>
+                </div>
+
+                <div class="hero-orbit">✳</div>
+            </div>
+
+            <div class="hero-side-note">
+                A PLACE TO LEAVE A PIECE OF YOURSELF.
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="hero-bottom-line">
+        <span>SCROLL TO EXPLORE</span>
+        <span>↓</span>
+        <span>AN INDEPENDENT DIGITAL JOURNAL</span>
+    </div>
+
+</section>
+
+{% if featured_post %}
+
+<section class="featured-section">
+
+    <div class="section-heading">
+
+        <div>
+            <p class="eyebrow">{{ t('featured') }} / 001</p>
+            <h2>Selected <em>story.</em></h2>
+        </div>
+
+        <span class="section-index">THE EDITOR'S PICK</span>
+
+    </div>
+
+    <article class="featured-card">
+
+        <div class="featured-art">
+            <span class="featured-star">✳</span>
+            <span class="featured-art-label">ARCHIVE<br>NO. {{ "%03d"|format(featured_post.id) }}</span>
+            <span class="featured-art-bottom">A MOMENT PRESERVED</span>
+        </div>
+
+        <div class="featured-copy">
+
+            <div class="post-meta">
+                <span>{{ t('entry') }} {{ "%03d"|format(featured_post.id) }}</span>
+                <span>{{ featured_post.created_at.strftime('%d / %m / %Y') }}</span>
+            </div>
+
+            <h3>{{ featured_post.title }}</h3>
+
+            <p>{{ featured_post.content|striptags|truncate(220) }}</p>
+
+            <div class="featured-byline">
+                {{ t('author') }}
+                <strong>{{ featured_post.author.username }}</strong>
+            </div>
+
+            <a href="{{ url_for('main.post_detail', post_id=featured_post.id) }}" class="text-link">
+                {{ t('read_more') }} ↗
+            </a>
+
+        </div>
+
+    </article>
+
+</section>
+
+{% endif %}
+
+<section class="archive-section" id="archive">
+
+    <div class="section-heading">
+
+        <div>
+            <p class="eyebrow">THE COLLECTION / 001—∞</p>
+            <h2>{{ t('latest') }}<em>.</em></h2>
+        </div>
+
+        <span class="section-index">{{ pagination.total }} ENTRIES</span>
+
+    </div>
+
+    {% if posts %}
+
+        <div class="post-grid">
+
+            {% for post in posts %}
+
+                <article class="post-card">
+
+                    <div class="post-card-top">
+                        <span>NO. {{ "%03d"|format(post.id) }}</span>
+                        <span>✳</span>
+                    </div>
+
+                    <div class="post-card-art art-{{ loop.index0 % 4 }}">
+                        <span class="card-art-symbol">
+                            {% if loop.index0 % 2 == 0 %}✳{% else %}✦{% endif %}
+                        </span>
+                        <span class="card-art-caption">A FRAGMENT OF THE ARCHIVE</span>
+                    </div>
+
+                    <div class="post-card-content">
+
+                        <div class="post-meta">
+                            <span>{{ post.created_at.strftime('%d.%m.%Y') }}</span>
+                            <span>{{ post.author.username }}</span>
+                        </div>
+
+                        <h3>
+                            <a href="{{ url_for('main.post_detail', post_id=post.id) }}">
+                                {{ post.title }}
+                            </a>
+                        </h3>
+
+                        <p>{{ post.content|striptags|truncate(135) }}</p>
+
+                        <div class="post-card-bottom">
+
+                            <a href="{{ url_for('main.post_detail', post_id=post.id) }}" class="text-link">
+                                {{ t('read_more') }} ↗
+                            </a>
+
+                            {% if current_user.is_authenticated and current_user.id == post.user_id %}
+                                <a href="{{ url_for('main.edit_post', post_id=post.id) }}" class="edit-mini">
+                                    {{ t('edit_post') }}
+                                </a>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+        {% if pagination.pages > 1 %}
+
+            <nav class="pagination" aria-label="Pagination">
+
+                {% if pagination.has_prev %}
+                    <a href="{{ url_for('main.index', page=pagination.prev_num) }}">
+                        ← {{ t('previous') }}
+                    </a>
+                {% else %}
+                    <span class="disabled">← {{ t('previous') }}</span>
+                {% endif %}
+
+                <span class="pagination-current">
+                    {{ t('page') }} {{ pagination.page }} {{ t('of') }} {{ pagination.pages }}
+                </span>
+
+                {% if pagination.has_next %}
+                    <a href="{{ url_for('main.index', page=pagination.next_num) }}">
+                        {{ t('next') }} →
+                    </a>
+                {% else %}
+                    <span class="disabled">{{ t('next') }} →</span>
+                {% endif %}
+
+            </nav>
+
+        {% endif %}
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <span class="empty-symbol">✳</span>
+
+            <h3>{{ t('no_posts') }}</h3>
+
+            <p>{{ t('empty_archive') }}</p>
+
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.create_post') }}" class="button button-light">
+                    {{ t('create_post') }} ↗
+                </a>
+            {% else %}
+                <a href="{{ url_for('main.register') }}" class="button button-light">
+                    {{ t('register') }} ↗
+                </a>
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+<section class="manifesto-section">
+
+    <span class="manifesto-mark">✳</span>
+
+    <p class="eyebrow">A SMALL MANIFESTO</p>
+
+    <h2>Not everything<br>needs to be <em>understood.</em></h2>
+
+    <p>Some things only need a place to exist.</p>
+
+    <span class="manifesto-bottom">END OF TRANSMISSION — FOR NOW</span>
+
+</section>
+
+{% endblock %}
